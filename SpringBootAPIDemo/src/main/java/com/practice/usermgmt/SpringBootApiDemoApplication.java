@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class SpringBootApiDemoApplication {
 
 	public static void main(String[] args) {
-		System.out.println("In SpringBootApiDemoApplication main method");
+		System.out.println("***** In SpringBootApiDemoApplication main method *****");
 		SpringApplication.run(SpringBootApiDemoApplication.class, args);
 	}
 }
