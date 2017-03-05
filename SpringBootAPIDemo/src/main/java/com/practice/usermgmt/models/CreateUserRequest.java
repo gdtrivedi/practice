@@ -5,7 +5,7 @@ package com.practice.usermgmt.models;
 
 import java.io.Serializable;
 
-import com.practice.usermgmt.beans.User;
+import com.practice.usermgmt.entities.User;
 
 /**
  * @author gauta

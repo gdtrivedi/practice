@@ -3,6 +3,7 @@
  */
 package com.practice.usermgmt.controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -11,10 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.practice.usermgmt.beans.User;
+import com.practice.usermgmt.entities.User;
 import com.practice.usermgmt.models.CreateUserRequest;
 import com.practice.usermgmt.models.CreateUserResponse;
 import com.practice.usermgmt.models.GetUsersResponse;
+import com.practice.usermgmt.services.UserService;
 
 /**
  * @author gauta
@@ -24,61 +26,68 @@ import com.practice.usermgmt.models.GetUsersResponse;
 @RequestMapping("/users")
 public class UserController {
 
-	@RequestMapping(value = "/", method = RequestMethod.POST)
+	@Autowired
+	UserService userService;
+
+	@RequestMapping(value = "", method = RequestMethod.POST)
 	public ResponseEntity<CreateUserResponse> createUser(RequestEntity<CreateUserRequest> createUserRequest) {
 		CreateUserResponse response = new CreateUserResponse();
-		response.setUserId(111);
-
+		response.setUserId(userService.add(createUserRequest.getBody().getUser()));
 		ResponseEntity<CreateUserResponse> responseEntity = new ResponseEntity<>(response, HttpStatus.OK);
-
 		return responseEntity;
 	}
 
-	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public ResponseEntity<GetUsersResponse> createUser() {
+	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+	public ResponseEntity<CreateUserResponse> updateUser(RequestEntity<CreateUserRequest> createUserRequest,
+			@PathVariable Integer id) {
+
+		HttpStatus status = HttpStatus.OK;
+
+		User user = createUserRequest.getBody().getUser();
+
+		if (null == userService.getById(id)) {
+			status = HttpStatus.CREATED;
+			user.setId(null);
+		} else {
+			user.setId(id);
+		}
+
+		CreateUserResponse response = new CreateUserResponse();
+		response.setUserId(userService.update(user));
+		ResponseEntity<CreateUserResponse> responseEntity = new ResponseEntity<>(response, status);
+		return responseEntity;
+	}
+
+	@RequestMapping(value = "", method = RequestMethod.GET)
+	public ResponseEntity<GetUsersResponse> getAllUsers() {
 		GetUsersResponse response = new GetUsersResponse();
-
-		User user1 = new User();
-		user1.setId(111);
-		user1.setFirstName("Gautam");
-		user1.setMiddleName("Dilipbhai");
-		user1.setLastName("Trivedi");
-		user1.setEmail("gautamtrivedi@email.com");
-		user1.setRoleId(1);
-
-		response.getUsers().add(user1);
-
-		User user2 = new User();
-		user2.setId(222);
-		user2.setFirstName("Gautam1");
-		user2.setMiddleName("Dilipbhai1");
-		user2.setLastName("Trivedi1");
-		user2.setEmail("gautamtrivedi1@email.com");
-		user2.setRoleId(1);
-
-		response.getUsers().add(user2);
-
+		response.getUsers().addAll(userService.getAll());
 		ResponseEntity<GetUsersResponse> responseEntity = new ResponseEntity<>(response, HttpStatus.OK);
-
 		return responseEntity;
 	}
-	
+
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public ResponseEntity<GetUsersResponse> createUser(@PathVariable Integer id) {
+	public ResponseEntity<GetUsersResponse> getUserById(@PathVariable Integer id) {
 		GetUsersResponse response = new GetUsersResponse();
-
-		User user1 = new User();
-		user1.setId(111);
-		user1.setFirstName("Gautam");
-		user1.setMiddleName("Dilipbhai");
-		user1.setLastName("Trivedi");
-		user1.setEmail("gautamtrivedi@email.com");
-		user1.setRoleId(1);
-
-		response.getUsers().add(user1);
-
+		response.getUsers().add(userService.getById(id));
 		ResponseEntity<GetUsersResponse> responseEntity = new ResponseEntity<>(response, HttpStatus.OK);
+		return responseEntity;
+	}
 
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	public ResponseEntity<Boolean> deleteById(@PathVariable Integer id) {
+
+		HttpStatus status = HttpStatus.OK;
+		boolean deleteFlag = true;
+
+		if (null == userService.getById(id)) {
+			status = HttpStatus.BAD_REQUEST;
+			deleteFlag = false;
+		} else {
+			userService.delete(id);
+		}
+
+		ResponseEntity<Boolean> responseEntity = new ResponseEntity<>(deleteFlag, status);
 		return responseEntity;
 	}
 

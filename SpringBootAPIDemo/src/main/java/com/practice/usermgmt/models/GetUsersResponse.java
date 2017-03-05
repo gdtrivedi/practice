@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.practice.usermgmt.beans.User;
+import com.practice.usermgmt.entities.User;
 
 /**
  * @author gauta
