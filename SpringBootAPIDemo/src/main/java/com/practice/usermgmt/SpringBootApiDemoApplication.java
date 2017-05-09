@@ -8,6 +8,7 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan(basePackages="com.practice.usermgmt")
 public class SpringBootApiDemoApplication {
 
+	// Spring Boot Main Method
 	public static void main(String[] args) {
 		SpringApplication.run(SpringBootApiDemoApplication.class, args);
 	}
